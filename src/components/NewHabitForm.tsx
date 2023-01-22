@@ -1,7 +1,8 @@
-import {FormEvent, useState} from 'react'
+import {FormEvent, useState, useContext} from 'react'
 import { Check } from "phosphor-react";
 import * as Checkbox  from '@radix-ui/react-checkbox'
 import { api } from '../lib/axios';
+import { toast } from 'react-toastify';
 
 const availableWeekDays = [
   'Domingo',
@@ -13,7 +14,7 @@ const availableWeekDays = [
   'Sábado'
 ]
 
-export function NewHabitForm() {
+export function NewHabitForm() {  
   const [title, setTitle] = useState('')
   const [weekDays, setWeekDays] = useState<number[]>([])
 
@@ -31,8 +32,16 @@ export function NewHabitForm() {
 
     setTitle('')
     setWeekDays([])
-
-    alert('hábito criado com sucesso!')
+    toast.success('hábito criado com sucesso!', {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+      })
   }
   function handleToggleWeekDay (weekDay: number) {
     if (weekDays.includes(weekDay)) {

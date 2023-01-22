@@ -1,17 +1,31 @@
 import './lib/dayjs'
-
-import { Header } from './components/Header'
-import { SummaryTable } from './components/SummaryTable'
 import './styles/global.css'
-//import { Habit } from './components/Habits'
+import 'react-toastify/dist/ReactToastify.css';
+import { Home } from './components/Home'
+import { useContext, useEffect, useState } from 'react'
+import { User } from 'firebase/auth'
+
+import { AuthContext } from './components/AuthContext'
+import { AuthIndex } from './components/AuthIndex'
 
 export function App() {
-  return (
-    <div className='w-screen h-screen flex justify-center items-center'>
-      <div className='w-full max-w-5xl px-6 flex flex-col gap-16'>
-        <Header/>
-        <SummaryTable/>
-      </div>
-    </div>
-  )
+  const auth = useContext(AuthContext)
+  const [user, setUser] = useState<User|null>(auth.currentUser)
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setUser(user)
+    })
+    return () => unsubscribe()
+  }, [])
+
+  if (user) {
+    return (
+      <Home/>
+    )
+  } else {
+    return (
+      <AuthIndex/>
+    )
+  }
 }
