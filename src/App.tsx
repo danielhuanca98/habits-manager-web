@@ -7,6 +7,29 @@ import { User } from 'firebase/auth'
 
 import { AuthContext } from './components/AuthContext'
 import { AuthIndex } from './components/AuthIndex'
+import { api } from './lib/axios';
+
+navigator.serviceWorker.register('service-worker.js')
+  .then(async serviceWorker => {
+    let subscription = await serviceWorker.pushManager.getSubscription()
+
+    if (!subscription) {
+      const publiKeyResponse = await api.get('/push/public_key')
+
+      subscription = await serviceWorker.pushManager.subscribe({
+        applicationServerKey: publiKeyResponse.data.publicKey,
+        userVisibleOnly: true
+      })
+    }
+
+    await api.post('/push/register', {
+      subscription,
+    })
+
+    await api.post('/push/send', {
+      subscription,
+    })
+  })
 
 export function App() {
   const auth = useContext(AuthContext)
